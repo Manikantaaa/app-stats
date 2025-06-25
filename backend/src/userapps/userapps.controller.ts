@@ -11,7 +11,10 @@ export class UserAppsController {
   findAll() {
     return this.svc.findAll();
   }
-
+@Get("/visible-apps")
+  findVisible() {
+    return this.svc.findVisible();
+  }
   @Post()
   create(@Body() dto: CreateUserAppDto) {
     return this.svc.create(dto);
@@ -22,8 +25,8 @@ export class UserAppsController {
     return this.svc.update(+id, dto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.svc.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.svc.remove(+id);
+  // }
 }
