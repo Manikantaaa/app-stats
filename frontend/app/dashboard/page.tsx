@@ -40,7 +40,6 @@ export default function DashboardClient() {
   const { user } = useAuthContext();
   const [userLogged, setUserLogged] = useState<boolean>(false);
 
-  useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(getApiUrl("usersList"));
@@ -49,6 +48,7 @@ export default function DashboardClient() {
         console.error("Error fetching users", error);
       }
     };
+  useEffect(() => {
     fetchUsers();
   }, []);
   useEffect(() => {
@@ -96,6 +96,7 @@ export default function DashboardClient() {
     } else {
       await axios.post(getApiUrl("addUser"), formData);
     }
+    await fetchUsers()
     setFormData({ firstname: "", lastname: "", email: "", password: "", status: "1" });
     setEditingUserId(null);
     setShowModal(false);
