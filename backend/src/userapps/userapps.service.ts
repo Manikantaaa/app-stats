@@ -33,7 +33,7 @@ export class UserAppsService {
 async update(userId: number, { appIds }: UpdateUserAppDto) {
   if (!appIds) return;
 
-  // Step 1: Fetch current assignments for this user
+  
   const currentAssignments = await this.prisma.userApp.findMany({
     where: { ua_u_id: userId },
     select: { ua_app_id: true },
@@ -41,13 +41,11 @@ async update(userId: number, { appIds }: UpdateUserAppDto) {
 
   const currentAppIds = currentAssignments.map(ua => ua.ua_app_id);
 
-  // Step 2: Determine new apps to insert
   const appsToAdd = appIds.filter(appId => !currentAppIds.includes(appId));
 
-  // Step 3: Determine apps to remove
   const appsToRemove = currentAppIds.filter(appId => !appIds.includes(appId));
 
-  // Step 4: Add new apps
+
   if (appsToAdd.length > 0) {
     const creations = appsToAdd.map(appId => ({
       ua_u_id: userId,
@@ -57,7 +55,7 @@ async update(userId: number, { appIds }: UpdateUserAppDto) {
     await this.prisma.userApp.createMany({ data: creations });
   }
 
-  // Step 5: Delete removed apps
+
   if (appsToRemove.length > 0) {
     await this.prisma.userApp.deleteMany({
       where: {

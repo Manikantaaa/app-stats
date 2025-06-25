@@ -6,7 +6,6 @@ import * as bcrypt from 'bcrypt';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  // Get active users
   async getUsers() {
     return this.prisma.user.findMany({
       where: { u_status: { not: 2 } }, 
@@ -50,6 +49,7 @@ export class UsersService {
     return this.prisma.user.update({
       where: { u_id: id },
       data: {
+        u_id:id,
         u_firstname: data.firstname,
         u_lastname: data.lastname,
         u_email: data.email,

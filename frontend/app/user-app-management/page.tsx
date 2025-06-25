@@ -34,13 +34,13 @@ export default function UserAppManagement() {
       setUserLogged(true);
     }
   }, [user, router]);
-  // Grouped view: { userId: { user, apps: [app1, app2] } }
+
   const groupedUserApps = userApps.reduce(
     (acc: Record<number, { user: User; apps: App[] }>, curr) => {
       const uid = curr.user.u_id;
       if (!acc[uid]) acc[uid] = { user: curr.user, apps: [] };
 
-      // 🛡️ Prevent duplicate apps
+      
       const alreadyAdded = acc[uid].apps.some(app => app.app_id === curr.app.app_id);
       if (!alreadyAdded) {
         acc[uid].apps.push(curr.app);
@@ -91,18 +91,18 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   const payload = { appIds: selectedApps };
 
-  // Use PUT when updating existing user assignment
+  
   if (userApps.some(ua => ua.ua_u_id === selectedUser)) {
     await axios.put(getApiUrl("userApps") + "/" + selectedUser, payload);
   } else {
-    // Use POST when assigning apps to a user for the first time
+   
     await axios.post(getApiUrl("userApps"), {
       userId: selectedUser,
       ...payload,
     });
   }
 
-  // Refresh data
+ 
   const res = await axios.get<UserApp[]>(getApiUrl("userApps"));
   setUserApps(res.data);
   setShowModal(false);
@@ -123,7 +123,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               setSelectedUser(null);
               setSelectedApps([]);
               setShowModal(true);
-            }}>➕ Assign Apps</button>
+            }} className="add">➕ Assign Apps</button>
           </div>
 
           <table>
@@ -164,13 +164,13 @@ const handleSubmit = async (e: React.FormEvent) => {
               <div className="modal">
                 <h3>{selectedUser ? "Edit App Assignments" : "Assign Apps to User"}</h3>
                 <form onSubmit={handleSubmit}>
-                  <label>
+                  <label className="formGroup">
                     <span>User:</span>
                     <select
                       value={selectedUser ?? ""}
                       onChange={e => setSelectedUser(Number(e.target.value))}
                       required
-                      disabled={selectedUser !== null} // 👈 disables select during edit
+                      disabled={selectedUser !== null} 
                     >
                       <option value="" disabled>Select User</option>
                       {users.map(u => (
@@ -182,7 +182,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   </label>
 
 
-                  <div >
+                  <label className="formGroup">
                     <span>Apps:</span>
                     {apps.map(a => (
                       <label key={a.app_id} >
@@ -196,11 +196,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                         {a.app_name}
                       </label>
                     ))}
-                  </div>
+                  </label>
 
                   <div className="buttonGroup">
-                    <button type="submit">Save</button>
-                    <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
+                    <button type="submit" className="submitBtn">Save</button>
+                    <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
                   </div>
                 </form>
               </div>

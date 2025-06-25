@@ -40,15 +40,17 @@ export default function DashboardClient() {
   const { user } = useAuthContext();
   const [userLogged, setUserLogged] = useState<boolean>(false);
 
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
         const res = await axios.get(getApiUrl("usersList"));
-        setUsers(res.data);
+        if (res.data) {
+          setUsers(res.data);
+        }
       } catch (error) {
         console.error("Error fetching users", error);
       }
     };
-  useEffect(() => {
     fetchUsers();
   }, []);
   useEffect(() => {
@@ -92,11 +94,12 @@ export default function DashboardClient() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingUserId) {
-      await axios.put(`${getApiUrl("updateUser")}/${editingUserId}`, formData);
+     await axios.put(`${getApiUrl("updateUser")}/${editingUserId}`, formData);
     } else {
       await axios.post(getApiUrl("addUser"), formData);
     }
-    await fetchUsers()
+    const refreshed = await axios.get(getApiUrl("usersList"));
+    setUsers(refreshed.data);
     setFormData({ firstname: "", lastname: "", email: "", password: "", status: "1" });
     setEditingUserId(null);
     setShowModal(false);
@@ -110,7 +113,7 @@ export default function DashboardClient() {
         <main className="list">
           <div className="table-header">
             <h2>User List</h2>
-            <button onClick={() => setShowModal(true)} className="add-user-btn">
+            <button onClick={() => setShowModal(true)} className="add">
               ➕ Add User
             </button>
           </div>
@@ -143,7 +146,7 @@ export default function DashboardClient() {
               ))}
             </tbody>
           </table>
-      
+
           {
             showModal && (
               <div className="modalOverlay">
@@ -215,7 +218,7 @@ export default function DashboardClient() {
 
 
         </main>
-}
+      }
     </>
   );
 }

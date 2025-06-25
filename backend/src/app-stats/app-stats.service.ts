@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppStatDto } from './dto/create-app-stat.dto';
 import { UpdateAppStatDto } from './dto/update-app-stat.dto';
 

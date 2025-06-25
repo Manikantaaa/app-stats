@@ -36,7 +36,7 @@ const router = useRouter();
       }
     };
     fetchApps();
-  }, [apps]);
+  }, []);
   const toggleVisibility = async (id: number, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
     try {
@@ -98,7 +98,7 @@ const router = useRouter();
     <div className="list">
       <div className="table-header" style={{ display: "flex", justifyContent: "space-between" }}>
         <h2>App List</h2>
-        <button className="add-user-btn" onClick={() => setShowModal(true)}>➕ Add App</button>
+        <button className="add" onClick={() => setShowModal(true)}>➕ Add App</button>
       </div>
 
       <table>
