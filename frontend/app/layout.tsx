@@ -5,6 +5,7 @@ import Sidebar from "@/components/Sidebar";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import { SessionProvider } from "next-auth/react";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,19 +30,18 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <div className="wrapper">
-                  <SessionProvider>
-
-        <AuthProvider>
-          <Navbar/>
-            <div className="layout">
-              <Sidebar /> 
-              <main className="content">
-                {children}
-              </main>
-            </div>
-            <footer className="footer">© {new Date().getFullYear()} MyApp. All rights reserved.</footer>
-          </AuthProvider>
-                  </SessionProvider>
+          <SessionProvider>
+            <AuthProvider>
+              <Navbar />
+              <div className="layout">
+                <Sidebar />
+                <main className="content">
+                  {children}
+                </main>
+              </div>
+<Footer/>
+            </AuthProvider>
+          </SessionProvider>
 
         </div>
       </body>

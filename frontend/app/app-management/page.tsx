@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import getApiUrl from "@/constants/endpoints";
 import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function AppManagement() {
   const [apps, setApps] = useState([]);
@@ -13,7 +15,17 @@ export default function AppManagement() {
     status: "1",
   });
   const [editingAppId, setEditingAppId] = useState<number | null>(null);
+const router = useRouter();
+  const { user } = useAuthContext();
+  const [userLogged, setUserLogged] = useState<boolean>(false);
 
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    } else {
+      setUserLogged(true);
+    }
+  }, [user, router]);
   useEffect(() => {
     const fetchApps = async () => {
       try {
@@ -78,9 +90,12 @@ export default function AppManagement() {
       console.error("Error saving app", error);
     }
   };
+  if (!user) return null;
 
   return (
     <>
+    {userLogged&&
+    <div className="list">
       <div className="table-header" style={{ display: "flex", justifyContent: "space-between" }}>
         <h2>App List</h2>
         <button className="add-user-btn" onClick={() => setShowModal(true)}>➕ Add App</button>
@@ -155,6 +170,8 @@ export default function AppManagement() {
           </div>
         </div>
       )}
-    </>
+    </div>
+}
+</>
   );
 }

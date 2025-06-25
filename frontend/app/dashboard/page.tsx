@@ -106,7 +106,7 @@ export default function DashboardClient() {
   return (
     <>
       {userLogged &&
-        <main className="content">
+        <main className="list">
           <div className="table-header">
             <h2>User List</h2>
             <button onClick={() => setShowModal(true)} className="add-user-btn">

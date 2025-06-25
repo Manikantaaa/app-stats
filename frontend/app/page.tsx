@@ -49,8 +49,7 @@ const LoginPage = () => {
   return (
     <>{
       userLogged &&
-    
-    <div className="wrapper">
+    <>
       <header className="header">
         <div className="logo">🌟 MyApp</div>
         <button className="loginBtn" onClick={() => setShowLogin(true)}>
@@ -97,7 +96,7 @@ const LoginPage = () => {
           </div>
         )}
       </main>
-    </div>
+</>
 }
 </>
   );
