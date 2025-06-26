@@ -130,6 +130,9 @@ export default function GraphAnalysis() {
           title: {
             text: "App Stats by Date (Filtered by App and Date)",
           },
+          credits:{
+            enabled: false
+          },
           xAxis: {
             categories: dateRange,
             crosshair: true,

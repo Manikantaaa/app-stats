@@ -132,129 +132,127 @@ export default function DashboardClient() {
     <>
       {userLogged && (
         role === 1 ? (
-       <Appstats/>
-        ):
-        ( <main className="list">
-          
-          <div className="table-header">
-            <h2>User List</h2>
-            <button onClick={() => setShowModal(true)} className="add">
-              ➕ Add User
-            </button>
-          </div>
+          <main className="list">
+              
+              <div className="table-header">
+                <h2>User List</h2>
+                <button onClick={() => setShowModal(true)} className="add">
+                  ➕ Add User
+                </button>
+              </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user: any) => (
-                <tr key={user.u_id}>
-                  <td>{user.u_firstname}</td>
-                  <td>{user.u_lastname}</td>
-                  <td>{user.u_status === 1 ? "✅" : "🚫"}</td>
-                  <td>
-                    <button onClick={() => toggleVisibility(user.u_id, user.u_status)}
-                      title={user.u_status === 1 ? "Hide" : "Show"}
-                    >
-                      {user.u_status === 1 ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                    <button onClick={() => handleEdit(user)} title="Edit"><Pencil size={18} /></button>
-                    <button onClick={() => handleDelete(user.u_id)} title="Delete"><Trash2 size={18} /></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              <table>
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user: any) => (
+                    <tr key={user.u_id}>
+                      <td>{user.u_firstname}</td>
+                      <td>{user.u_lastname}</td>
+                      <td>{user.u_status === 1 ? "✅" : "🚫"}</td>
+                      <td>
+                        <button onClick={() => toggleVisibility(user.u_id, user.u_status)}
+                          title={user.u_status === 1 ? "Hide" : "Show"}
+                        >
+                          {user.u_status === 1 ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                        <button onClick={() => handleEdit(user)} title="Edit"><Pencil size={18} /></button>
+                        <button onClick={() => handleDelete(user.u_id)} title="Delete"><Trash2 size={18} /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-          {
-            showModal && (
-              <div className="modalOverlay">
-                <div className="modal">
-                  <h3>{editingUserId ? "Edit User" : "Add New User"}</h3>
-                  <form onSubmit={handleFormSubmit}>
+              {
+                showModal && (
+                  <div className="modalOverlay">
+                    <div className="modal">
+                      <h3>{editingUserId ? "Edit User" : "Add New User"}</h3>
+                      <form onSubmit={handleFormSubmit}>
+                        <label className="formGroup">
+                          <span>First Name</span>
+                          <input
+                            type="text"
+                            name="firstname"
+                            value={formData.firstname}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </label>
+
+                        <label className="formGroup">
+                          <span>Last Name</span>
+                          <input
+                            type="text"
+                            name="lastname"
+                            value={formData.lastname}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </label>
+
+                        <label className="formGroup">
+                          <span>Email</span>
+                          <input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </label>
+
+                        {!editingUserId && (<label className="formGroup">
+                          <span>Password</span>
+                          <input
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </label>)}
+
+                        <label className="formGroup">
+                          <span>Status</span>
+                          <select name="status" value={formData.status} onChange={handleInputChange} required>
+                            <option value="1">Active</option>
+                            <option value="0">Hidden</option>
+                          </select>
+                        </label>
                     <label className="formGroup">
-                      <span>First Name</span>
-                      <input
-                        type="text"
-                        name="firstname"
-                        value={formData.firstname}
+                      <span>Role</span>
+                      <select
+                        name="role"
+                        value={formData.role}
                         onChange={handleInputChange}
                         required
-                      />
-                    </label>
-
-                    <label className="formGroup">
-                      <span>Last Name</span>
-                      <input
-                        type="text"
-                        name="lastname"
-                        value={formData.lastname}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </label>
-
-                    <label className="formGroup">
-                      <span>Email</span>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </label>
-
-                    {!editingUserId && (<label className="formGroup">
-                      <span>Password</span>
-                      <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </label>)}
-
-                    <label className="formGroup">
-                      <span>Status</span>
-                      <select name="status" value={formData.status} onChange={handleInputChange} required>
-                        <option value="1">Active</option>
-                        <option value="0">Hidden</option>
+                      >
+                        <option value="1">Admin</option>
+                        <option value="2">User</option>
                       </select>
                     </label>
-                <label className="formGroup">
-                  <span>Role</span>
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="1">Admin</option>
-                    <option value="2">User</option>
-                  </select>
-                </label>
 
-                    <div className="buttonGroup">
-                                           <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
- <button type="submit" className="submitBtn">Submit</button>
+                        <div className="buttonGroup">
+                                              <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
+    <button type="submit" className="submitBtn">Submit</button>
+                        </div>
+                      </form>
+
                     </div>
-                  </form>
-
-                </div>
-              </div>
-            )
-          }
-
-
-        </main>)
+                  </div>
+                )
+              }
+            </main>
+        ):
+        ( <Appstats/>)
       )}
     </>
   );

@@ -50,14 +50,7 @@ export default function Sidebar() {
       {userLogged && (
         <aside className="sidebar">
           {role === 1 ? (
-           <ul>
-              <li className={pathname === "/app-stats" ? "active" : ""}>
-                <Link href="/app-stats">App Stats</Link>
-              </li>
-            </ul>
-          ) : (
-            
-             <ul>
+            <ul>
               {menuItems.map((item) => (
                 <li
                   key={item.path}
@@ -66,6 +59,12 @@ export default function Sidebar() {
                   <Link href={item.path}>{item.label}</Link>
                 </li>
               ))}
+            </ul>
+          ) : (
+            <ul>
+              <li className={pathname === "/app-stats" ? "active" : ""}>
+                <Link href="/app-stats">App Stats</Link>
+              </li>
             </ul>
           )}
         </aside>
