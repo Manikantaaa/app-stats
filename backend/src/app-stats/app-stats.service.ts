@@ -26,17 +26,33 @@ export class AppStatsService {
 
     async findAll() {
         try {
-        const records = await this.prisma.appStats.findMany();
-        return {
+            const records = await this.prisma.appStats.findMany({
+            include: {
+                app: {
+                select: {
+                    app_name: true, // ✅ correct field name from your schema
+                },
+                },
+            },
+            });
+
+            // Flatten and rename `app_name` to `appName` for frontend response
+            const modifiedRecords = records.map(({app, ...rest}) => ({
+            ...rest,
+            appName: app.app_name,
+            }));
+
+            return {
             success: true,
             message: 'AppStats retrieved successfully',
-            data: records,
-        };
+            data: modifiedRecords,
+            };
         } catch (error) {
-        console.error('FindAll AppStats Error:', error);
-        throw new InternalServerErrorException('Failed to fetch AppStats');
+            console.error('FindAll AppStats Error:', error);
+            throw new InternalServerErrorException('Failed to fetch AppStats');
         }
-    }
+        }
+
 
     async findOne(id: number) {
         try {
