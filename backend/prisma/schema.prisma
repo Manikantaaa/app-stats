@@ -47,13 +47,13 @@ model UserApp {
 model AppStats {
   as_id           Int      @id @default(autoincrement())
   as_date         DateTime
-  as_app_id       Int
+  as_ua_id        Int
   as_count        Int
   as_created_at   DateTime @default(now())
   as_updated_at   DateTime @updatedAt
   as_status       Int      // 0 - hidden, 1 - active, 2 - deleted
 
-  app             App      @relation(fields: [as_app_id], references: [app_id])
+  app             App      @relation(fields: [as_ua_id], references: [ua_id])
 }
 
 
