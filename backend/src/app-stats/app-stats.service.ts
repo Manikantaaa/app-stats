@@ -2,6 +2,7 @@ import { Injectable, InternalServerErrorException, NotFoundException } from '@ne
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppStatDto } from './dto/create-app-stat.dto';
 import { UpdateAppStatDto } from './dto/update-app-stat.dto';
+import { connect } from 'http2';
 
 @Injectable()
 export class AppStatsService {
@@ -9,11 +10,22 @@ export class AppStatsService {
 
     async create(data: CreateAppStatDto){
         try{
-            await this.prisma.appStats.create({
-                data:{
-                    ...data,
-                    as_date : new Date(data.as_date)
+         await this.prisma.appStats.create({
+            data: {
+                as_date: new Date(data.as_date),
+                as_count: data.as_count,
+                as_status: data.as_status,
+                userApp: {
+                connect: {
+                    ua_id: data.as_ua_id,
                 },
+                },
+                appApi: {
+                connect: {
+                    ai_id: data.as_ai_id,
+                },
+                },
+            },
             });
             return{
                 success: true,
@@ -26,32 +38,17 @@ export class AppStatsService {
 
     async findAll() {
         try {
-            const records = await this.prisma.appStats.findMany({
-            include: {
-                app: {
-                select: {
-                    app_name: true, // ✅ correct field name from your schema
-                },
-                },
-            },
-            });
-
-            // Flatten and rename `app_name` to `appName` for frontend response
-            const modifiedRecords = records.map(({app, ...rest}) => ({
-            ...rest,
-            appName: app.app_name,
-            }));
-
-            return {
+        const records = await this.prisma.appStats.findMany();
+        return {
             success: true,
             message: 'AppStats retrieved successfully',
-            data: modifiedRecords,
-            };
+            data: records,
+        };
         } catch (error) {
-            console.error('FindAll AppStats Error:', error);
-            throw new InternalServerErrorException('Failed to fetch AppStats');
+        console.error('FindAll AppStats Error:', error);
+        throw new InternalServerErrorException('Failed to fetch AppStats');
         }
-        }
+    }
 
 
     async findOne(id: number) {

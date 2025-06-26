@@ -21,12 +21,7 @@ interface AppData {
   appName: string;
 }
 
-const appIdToName: Record<number, string> = {
-  1: "face",
-  2: "chat",
-  3: "photo",
-  4: "video",
-};
+
 
 
 export default function GraphAnalysis() {
@@ -116,19 +111,6 @@ export default function GraphAnalysis() {
             ? [selectedApp]
             : appNames;
 
-        // const series = allAppNames.map((name) => {
-        //     return {
-        //     name,
-        //     data: dateRange.map((date) => {
-        //         const found = filteredData.find(
-        //         (entry) =>
-        //             entry.appName === name &&
-        //             entry.as_date.startsWith(date)
-        //         );
-        //         return found ? found.as_count : 0;
-        //     }),
-        //     };
-        // });
         
         const series = allAppNames.map((name)=>({
           name,

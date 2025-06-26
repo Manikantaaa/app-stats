@@ -132,7 +132,9 @@ export default function DashboardClient() {
     <>
       {userLogged && (
         role === 1 ? (
-        <main className="list">
+       <Appstats/>
+        ):
+        ( <main className="list">
           
           <div className="table-header">
             <h2>User List</h2>
@@ -227,18 +229,18 @@ export default function DashboardClient() {
                         <option value="0">Hidden</option>
                       </select>
                     </label>
-<label className="formGroup">
-  <span>Role</span>
-  <select
-    name="role"
-    value={formData.role}
-    onChange={handleInputChange}
-    required
-  >
-    <option value="1">Admin</option>
-    <option value="2">User</option>
-  </select>
-</label>
+                <label className="formGroup">
+                  <span>Role</span>
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="1">Admin</option>
+                    <option value="2">User</option>
+                  </select>
+                </label>
 
                     <div className="buttonGroup">
                                            <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
@@ -252,8 +254,7 @@ export default function DashboardClient() {
           }
 
 
-        </main>):
-        (<Appstats/>)
+        </main>)
       )}
     </>
   );
