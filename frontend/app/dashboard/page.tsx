@@ -6,6 +6,7 @@ import getApiUrl from "@/constants/endpoints";
 import { Eye, EyeOff, Pencil, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";
+import Appstats from "../app-stats/page";
 
 type User = {
   u_id: number;
@@ -24,6 +25,7 @@ export default function DashboardClient() {
     email: string;
     password?: string;
     status: string;
+    role: string; 
   };
 
   const [formData, setFormData] = useState<FormData>({
@@ -32,6 +34,7 @@ export default function DashboardClient() {
     email: "",
     password: "",
     status: "0",
+     role: "1",
   });
 
 
@@ -39,6 +42,8 @@ export default function DashboardClient() {
   const router = useRouter();
   const { user } = useAuthContext();
   const [userLogged, setUserLogged] = useState<boolean>(false);
+  const session = useAuthContext();
+  const [role, setRole] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -53,14 +58,29 @@ export default function DashboardClient() {
     };
     fetchUsers();
   }, []);
+ 
   useEffect(() => {
-    if (!user) {
-      router.push("/");
-    }
-    else {
-      setUserLogged(true)
-    }
-  }, [user, router]);
+    const fetchRole = async () => {
+      if (!session?.user) {
+        router.push("/");
+      } else {
+        try {
+          const res = await axios.get(getApiUrl("role"), {
+            params: { email: session.user.email }, 
+          });
+          if (res.data?.u_role) {
+            setRole(res.data.u_role);
+          }
+          setUserLogged(true);
+        } catch (err) {
+          console.error("Error fetching role:", err);
+        }
+      }
+    };
+
+    fetchRole();
+  }, [session, router]);
+
   const handleDelete = async (id: number) => {
     await axios.delete(`${getApiUrl("deleteUser")}/${id}`);
     setUsers((prev) => prev.filter((u) => u.u_id !== id));
@@ -82,6 +102,7 @@ export default function DashboardClient() {
       lastname: user.u_lastname,
       email: user.u_email,
       status: String(user.u_status),
+      role: String(user.u_role),
     });
     setEditingUserId(user.u_id);
     setShowModal(true);
@@ -100,7 +121,7 @@ export default function DashboardClient() {
     }
     const refreshed = await axios.get(getApiUrl("usersList"));
     setUsers(refreshed.data);
-    setFormData({ firstname: "", lastname: "", email: "", password: "", status: "1" });
+    setFormData({ firstname: "", lastname: "", email: "", password: "", status: "1",role:"1"});
     setEditingUserId(null);
     setShowModal(false);
   };
@@ -109,8 +130,10 @@ export default function DashboardClient() {
 
   return (
     <>
-      {userLogged &&
+      {userLogged && (
+        role === 1 ? (
         <main className="list">
+          
           <div className="table-header">
             <h2>User List</h2>
             <button onClick={() => setShowModal(true)} className="add">
@@ -204,10 +227,22 @@ export default function DashboardClient() {
                         <option value="0">Hidden</option>
                       </select>
                     </label>
+<label className="formGroup">
+  <span>Role</span>
+  <select
+    name="role"
+    value={formData.role}
+    onChange={handleInputChange}
+    required
+  >
+    <option value="1">Admin</option>
+    <option value="2">User</option>
+  </select>
+</label>
 
                     <div className="buttonGroup">
-                      <button type="submit" className="submitBtn">Submit</button>
-                      <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
+                                           <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
+ <button type="submit" className="submitBtn">Submit</button>
                     </div>
                   </form>
 
@@ -217,8 +252,9 @@ export default function DashboardClient() {
           }
 
 
-        </main>
-      }
+        </main>):
+        (<Appstats/>)
+      )}
     </>
   );
 }

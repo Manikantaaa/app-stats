@@ -8,52 +8,63 @@ datasource db {
 }
 
 model User {
-  u_id         Int       @id @default(autoincrement())
+  u_id         Int      @id @default(autoincrement())
+  u_role       Int      
   u_firstname  String
   u_lastname   String
-  u_email      String     
+  u_email      String
   u_password   String
-  u_status     Int        // 0 - hidden, 1 - active, 2 - deleted
-  u_created_at DateTime   @default(now())
-  u_updated_at DateTime   @updatedAt
+  u_status     Int // 0 - hidden, 1 - active, 2 - deleted
+  u_created_at DateTime @default(now())
+  u_updated_at DateTime @updatedAt
 
-  userApps     UserApp[]
+  userApps UserApp[]
+  role     UserRole  @relation(fields: [u_role], references: [ur_id])
 }
 
-
 model App {
-  app_id          Int        @id @default(autoincrement())
-  app_name        String     @unique
-  app_created_at  DateTime   @default(now())
-  app_updated_at  DateTime   @updatedAt
-  app_status      Int        // 0 - hidden, 1 - active, 2 - deleted
+  app_id         Int      @id @default(autoincrement())
+  app_name       String   @unique
+  app_created_at DateTime @default(now())
+  app_updated_at DateTime @updatedAt
+  app_status     Int // 0 - hidden, 1 - active, 2 - deleted
 
-  userApps        UserApp[]
-  appStats        AppStats[]
+  userApps UserApp[]
+  appStats AppStats[]
 }
 
 model UserApp {
-  ua_id           Int      @id @default(autoincrement())
-  ua_u_id         Int
-  ua_app_id       Int
-  ua_created_at   DateTime @default(now())
-  ua_updated_at   DateTime @updatedAt
-  ua_status       Int      // 0 - hidden, 1 - active, 2 - deleted
+  ua_id         Int      @id @default(autoincrement())
+  ua_u_id       Int
+  ua_app_id     Int
+  ua_created_at DateTime @default(now())
+  ua_updated_at DateTime @updatedAt
+  ua_status     Int // 0 - hidden, 1 - active, 2 - deleted
 
-  user            User     @relation(fields: [ua_u_id], references: [u_id])
-  app             App      @relation(fields: [ua_app_id], references: [app_id])
+  user User @relation(fields: [ua_u_id], references: [u_id])
+  app  App  @relation(fields: [ua_app_id], references: [app_id])
+
+  AppStats AppStats[]
 }
 
 model AppStats {
-  as_id           Int      @id @default(autoincrement())
-  as_date         DateTime
-  as_ua_id        Int
-  as_count        Int
-  as_created_at   DateTime @default(now())
-  as_updated_at   DateTime @updatedAt
-  as_status       Int      // 0 - hidden, 1 - active, 2 - deleted
+  as_id         Int      @id @default(autoincrement())
+  as_date       DateTime
+  as_ua_id     Int
+  as_count      Int
+  as_created_at DateTime @default(now())
+  as_updated_at DateTime @updatedAt
+  as_status     Int // 0 - hidden, 1 - active, 2 - deleted
 
-  app             App      @relation(fields: [as_ua_id], references: [ua_id])
+   userApp UserApp @relation(fields: [as_ua_id], references: [ua_id])
+
+  App App[]
 }
+model UserRole {
+  ur_id         Int      @id @default(autoincrement())
+  ur_role       Int       @unique
+  ur_created_at DateTime @default(now())
+  ur_updated_at DateTime @updatedAt
 
-
+ users User[]
+ }

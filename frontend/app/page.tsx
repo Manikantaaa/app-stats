@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";
+import getApiUrl from "@/constants/endpoints";
+import axios from "axios";
 
 const LoginPage = () => {
- const [showLogin, setShowLogin] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -23,7 +25,7 @@ const LoginPage = () => {
       setUser({ name, email, image });
       router.push("/dashboard");
     }
-    else{
+    else {
       setUserLogged(true)
     }
   }, [session]);
@@ -32,16 +34,17 @@ const LoginPage = () => {
     event.preventDefault();
     setIsSubmitting(true);
     try {
-      // Replace with your actual login API call
-      // Example: const res = await axios.post('/api/login', { email, password });
-      // Simulate login success for demonstration:
-      // On success, set user and redirect
-      setUser({ name: email.split("@")[0], email, image: "" });
-      // Optionally, show a toast or notification here
+      const res = await axios.post(getApiUrl("login"), {
+        email,
+        password,
+      });
+
+      const user = res.data;
+      setUser(user);
       router.push("/dashboard");
-    } catch (error) {
-      // Optionally, show an error toast or notification here
-      // Example: toast.error("Invalid email or password");
+    } catch (error: any) {
+      console.error("Login failed", error);
+      alert("Invalid email or password");
     } finally {
       setIsSubmitting(false);
     }
@@ -49,56 +52,56 @@ const LoginPage = () => {
   return (
     <>{
       userLogged &&
-    <>
-      <header className="header">
-        <div className="logo">🌟 MyApp</div>
-        <button className="loginBtn" onClick={() => setShowLogin(true)}>
-          Login
-        </button>
-      </header>
+      <>
+        <header className="header">
+          <div className="logo">🌟 MyApp</div>
+          <button className="loginBtn" onClick={() => setShowLogin(true)}>
+            Login
+          </button>
+        </header>
 
-      <main className="main">
-        {!showLogin ? (
-          <div className="infoBox">
-            <h1>Welcome to MyApp</h1>
-            <p>This is some random info or promotional text.</p>
-          </div>
-        ) : (
-          <div className="formContainer">
-            <h2>Sign In</h2>
-            <form onSubmit={handleEmailPasswordLogin} className="form">
-              <input
-                type="email"
-                required
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <input
-                type="password"
-                required
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Logging in..." : "Login"}
+        <main className="main">
+          {!showLogin ? (
+            <div className="infoBox">
+              <h1>Welcome to MyApp</h1>
+              <p>This is some random info or promotional text.</p>
+            </div>
+          ) : (
+            <div className="formContainer">
+              <h2>Sign In</h2>
+              <form onSubmit={handleEmailPasswordLogin} className="form">
+                <input
+                  type="email"
+                  required
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <input
+                  type="password"
+                  required
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Logging in..." : "Login"}
+                </button>
+              </form>
+              <div className="separator">or</div>
+
+              <button
+                onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                className="googleBtn"
+              >
+                Sign in with Google
               </button>
-            </form>
-            <div className="separator">or</div>
-
-            <button
-              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-              className="googleBtn"
-            >
-              Sign in with Google
-            </button>
-          </div>
-        )}
-      </main>
-</>
-}
-</>
+            </div>
+          )}
+        </main>
+      </>
+    }
+    </>
   );
 };
 

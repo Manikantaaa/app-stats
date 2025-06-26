@@ -14,8 +14,9 @@ const apiEndpoints = {
   updateUser:'/update-user',
   login:`/login`,
   visibleApps:'/user-apps/visible-apps',
-  userApps:'/user-apps',
   appStats: "/app-stats",
+  userApps:'/user-apps',
+  role:'/role'
 
   } as const;
 

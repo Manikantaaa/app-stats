@@ -82,6 +82,8 @@ const router = useRouter();
           app_status: parseInt(formData.status),
         });
       }
+const res=await axios.get(getApiUrl("appsList"));
+        setApps(res.data);
 
       setShowModal(false);
       setFormData({ name: "", status: "1" });
@@ -163,8 +165,8 @@ const router = useRouter();
               </label>
 
               <div className="buttonGroup">
-                <button type="submit" className="submitBtn">Submit</button>
-                <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
+                             <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
+   <button type="submit" className="submitBtn">Submit</button>
               </div>
             </form>
           </div>
