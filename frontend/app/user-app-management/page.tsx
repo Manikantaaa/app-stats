@@ -199,8 +199,8 @@ const handleSubmit = async (e: React.FormEvent) => {
                   </label>
 
                   <div className="buttonGroup">
-                                     <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
-   <button type="submit" className="submitBtn">Save</button>
+                  <button type="button" onClick={() => setShowModal(false)} className="cancelBtn">Cancel</button>
+                  <button type="submit" className="submitBtn">Save</button>
                   </div>
                 </form>
               </div>
