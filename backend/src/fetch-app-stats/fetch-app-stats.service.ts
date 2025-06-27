@@ -132,7 +132,7 @@ export class FetchAppStatsService {
                     }
                 });
 
-                console.log(`Stored AppStats: feature= ${featureKey}, app=${appName}, count = ${count}`)
+                // console.log(`Stored AppStats: feature= ${featureKey}, app=${appName}, count = ${count}`)
             }
         }
        } catch (err){
