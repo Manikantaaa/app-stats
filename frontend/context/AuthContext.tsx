@@ -7,12 +7,17 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
+import axios from "axios";
+import getApiUrl from "@/constants/endpoints";
 
 export type User = {
+  id: number;
   name: string;
   email: string;
   image: string;
+  userApps: [];
+  role:number
 };
 
 type UserContextType = {
@@ -26,25 +31,42 @@ const AuthContext = createContext<UserContextType>({
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [user, setUser] = useState<User | null>(null);
-
   useEffect(() => {
-    if (session?.user) {
-      const {
-        name = "",
-        email = "",
-        image = "",
-      } = session.user as { name?: string | null; email?: string | null; image?: string | null };
-      setUser({
-        name: name ?? "",
-        email: email ?? "",
-        image: image ?? "",
+    const verifiedEmail= localStorage.getItem("email");
+      const fetchdata = async() => {
+      const res = await axios.post(getApiUrl("verify"), {
+        email:verifiedEmail
       });
-    } else {
-      setUser(null);
+      const user = res.data;
+      setUser(user);
     }
-  }, [session]);
+    if(verifiedEmail !=null ){
+      fetchdata();
+    }
+
+    // if (user) {
+    //   const {
+    //     id = 0,
+    //     name = "",
+    //     email = "",
+    //     image = "",
+    //     role = 2,
+    //   } = user as { id?: number; name?: string | null; email?: string | null; image?: string | null; role?: number | null };
+    //   setUser({
+    //     id: id ?? 0,
+    //     name: name ?? "",
+    //     email: email ?? "",
+    //     image: image ?? "",
+    //     userApps: user.userApps ?? [],
+    //     role: role ?? 2,
+    //   });
+    // } else {
+    //   setUser(null);
+    // }
+
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>

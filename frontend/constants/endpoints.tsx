@@ -13,6 +13,7 @@ const apiEndpoints = {
   deleteUser:'/delete-user',
   updateUser:'/update-user',
   login:`/login`,
+  verify:`/verify`,
   visibleApps:'/user-apps/visible-apps',
   appStats: "/app-stats",
   userApps:'/user-apps',

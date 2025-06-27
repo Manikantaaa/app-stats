@@ -42,10 +42,10 @@ export default function DashboardClient() {
   const router = useRouter();
   const { user } = useAuthContext();
   const [userLogged, setUserLogged] = useState<boolean>(false);
-  const session = useAuthContext();
-  const [role, setRole] = useState<number | null>(null);
+ 
 
   useEffect(() => {
+    if(user && user.role === 1){
     const fetchUsers = async () => {
       try {
         const res = await axios.get(getApiUrl("usersList"));
@@ -56,30 +56,19 @@ export default function DashboardClient() {
         console.error("Error fetching users", error);
       }
     };
+  
     fetchUsers();
+  }
   }, []);
  
-  useEffect(() => {
-    const fetchRole = async () => {
-      if (!session?.user) {
+   useEffect(() => {
+         if (!user) {
         router.push("/");
       } else {
-        try {
-          const res = await axios.get(getApiUrl("role"), {
-            params: { email: session.user.email }, 
-          });
-          if (res.data?.u_role) {
-            setRole(res.data.u_role);
-          }
-          setUserLogged(true);
-        } catch (err) {
-          console.error("Error fetching role:", err);
-        }
+        setUserLogged(true);
       }
-    };
-
-    fetchRole();
-  }, [session, router]);
+},
+[router]);
 
   const handleDelete = async (id: number) => {
     await axios.delete(`${getApiUrl("deleteUser")}/${id}`);
@@ -131,7 +120,7 @@ export default function DashboardClient() {
   return (
     <>
       {userLogged && (
-        role === 1 ? (
+        user.role === 1 ? (
           <main className="list">
               
               <div className="table-header">

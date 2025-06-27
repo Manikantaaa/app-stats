@@ -12,7 +12,7 @@ model User {
   u_role       Int      
   u_firstname  String
   u_lastname   String
-  u_email      String
+  u_email      String     @unique 
   u_password   String
   u_status     Int // 0 - hidden, 1 - active, 2 - deleted
   u_created_at DateTime @default(now())

@@ -20,7 +20,8 @@ const Navbar = () => {
   }, [user, router]);
 
   const handleLogout = async () => {
-    await signOut({ redirect: true, callbackUrl: "/" }); // ✅ Fixes error
+    await signOut({ redirect: true, callbackUrl: "/" }); 
+    localStorage.removeItem('email');
   };
 
   if (!user) return null;

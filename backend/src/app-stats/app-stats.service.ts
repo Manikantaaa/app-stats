@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateAppStatDto } from './dto/create-app-stat.dto';
 import { UpdateAppStatDto } from './dto/update-app-stat.dto';
 import { connect } from 'http2';
+import {  subDays, subWeeks, subMonths, startOfDay, endOfDay } from 'date-fns';
 
 @Injectable()
 export class AppStatsService {
@@ -38,7 +39,19 @@ export class AppStatsService {
 
     async findAll() {
         try {
-        const records = await this.prisma.appStats.findMany();
+        const records = await this.prisma.appStats.findMany({
+          include:{
+            userApp:{
+              select:{
+                app:{
+                  select:{
+                    app_name:true
+                  }
+                }
+              }
+            }
+          }
+        });
         return {
             success: true,
             message: 'AppStats retrieved successfully',
@@ -72,4 +85,90 @@ export class AppStatsService {
         }
     }
 
+
+async getStatsForApps(
+  userId: number,
+  appNames: string[],
+  dateFilter: string,
+  customDates: { from: string; to: string }
+) {
+  const appStats: { name: string; count: number }[] = [];
+
+  for (const appName of appNames) {
+    const userApp = await this.prisma.userApp.findFirst({
+      where: {
+        ua_u_id: userId,
+        app: { app_name: appName },
+      },
+      include: { app: true },
+    });
+
+    if (!userApp) continue;
+
+    let dateWhere: any = {};
+    const today = new Date();
+
+    switch (dateFilter) {
+      case 'Today':
+        dateWhere = {
+          gte: startOfDay(today),
+          lte: endOfDay(today),
+        };
+        break;
+
+      case 'Yesterday':
+        const yesterday = subDays(today, 1);
+        dateWhere = {
+          gte: startOfDay(yesterday),
+          lte: endOfDay(yesterday),
+        };
+        break;
+
+           case '1 week':
+        const lastWeek = subWeeks(today, 1);
+        dateWhere = {
+          gte: startOfDay(lastWeek),
+          lte: endOfDay(today),
+        };
+        break;
+
+      case '1 month':
+        const lastMonth = subMonths(today, 1);
+        dateWhere = {
+          gte: startOfDay(lastMonth),
+          lte: endOfDay(today),
+        };
+        break;
+
+      case 'Custom':
+        if (customDates.from && customDates.to) {
+          dateWhere = {
+            gte: new Date(customDates.from),
+            lte: new Date(customDates.to),
+          };
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    const stats = await this.prisma.appStats.aggregate({
+      where: {
+        as_ua_id: userApp.ua_id,
+        as_date: dateWhere,
+      },
+      _sum: { as_count: true },
+    });
+
+    appStats.push({
+      name: appName,
+      count: stats._sum.as_count || 0,
+    });
+  }
+
+  return appStats;
 }
+
+}
+

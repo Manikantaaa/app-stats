@@ -9,14 +9,18 @@ export class UserController {
   getAllUsers() {
     return this.userService.getUsers();
   }
-@Get("role")
-getRole(@Query("email") email: string) {
-  return this.userService.getRoleByEmail(email);
-}
+// @Get("role")
+// getRole(@Query("email") email: string) {
+//   return this.userService.getRoleByEmail(email);
+// }
 
 @Post("login")
 async login(@Body() body: { email: string; password: string }) {
   return this.userService.login(body);
+}
+@Post("verify")
+async loverifygin(@Body() body: { email: string }) {
+  return this.userService.verify(body.email);
 }
 
   @Post("add-user")

@@ -98,7 +98,7 @@ const res=await axios.get(getApiUrl("appsList"));
     <>
     {userLogged&&
     <div className="list">
-      <div className="table-header" style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="table-header" >
         <h2>App List</h2>
         <button className="add" onClick={() => setShowModal(true)}>➕ Add App</button>
       </div>

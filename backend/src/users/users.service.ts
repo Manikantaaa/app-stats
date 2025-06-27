@@ -20,18 +20,30 @@ export class UsersService {
       },
     });
   }
- async getRoleByEmail(email: string) {
-  return this.prisma.user.findFirst({
-    where: { u_email: email },
-    select: {
-      u_role: true,
-    },
-  });
-}
+//  async getRoleByEmail(email: string) {
+//   return this.prisma.user.findFirst({
+//     where: { u_email: email },
+//     select: {
+//       u_role: true,
+//     },
+//   });
+// }
 
 async login(data: { email: string; password: string }) {
   const user = await this.prisma.user.findFirst({
     where: { u_email: data.email },
+    include:{
+      userApps: {
+        select:{
+          app: {
+            select:{
+              app_id: true,
+              app_name: true
+            }
+          }
+        }
+      }
+    }
   });
 
   if (!user) {
@@ -48,6 +60,37 @@ async login(data: { email: string; password: string }) {
     name: user.u_firstname + " " + user.u_lastname,
     email: user.u_email,
     role: user.u_role,
+    id:user.u_id,
+    userApps: user.userApps
+    
+  };
+}
+async verify( email: string) {
+  const user = await this.prisma.user.findFirst({
+    where: { u_email: email },
+    include:{
+      userApps: {
+        select:{
+          app: {
+            select:{
+              app_id: true,
+              app_name: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (!user) {
+    throw new UnauthorizedException('Invalid email or password');
+  }
+  return {
+    name: user.u_firstname + " " + user.u_lastname,
+    email: user.u_email,
+    role: user.u_role,
+    id:user.u_id,
+    userApps: user.userApps
     
   };
 }

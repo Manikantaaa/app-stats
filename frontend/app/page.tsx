@@ -13,22 +13,24 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const { data: session } = useSession();
-  const { setUser } = useAuthContext();
+  // const { data: session } = useSession();
+  const { user, setUser } = useAuthContext();
   const [userLogged, setUserLogged] = useState<boolean>(false);
 
   useEffect(() => {
-    if (session?.user) {
-      const name = session.user.name ?? "";
-      const email = session.user.email ?? "";
-      const image = session.user.image ?? "";
-      setUser({ name, email, image });
+    if (user) {
+      const id = Number(user.id) || 0;
+      const name = user.name ?? "";
+      const email = user.email ?? "";
+      const image = user.image ?? "";
+      const role = Number(user.role) || 0;
+      setUser({ id, name, email, image, userApps: [], role});
       router.push("/dashboard");
     }
     else {
       setUserLogged(true)
     }
-  }, [session]);
+  }, []);
 
   async function handleEmailPasswordLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -41,6 +43,7 @@ const LoginPage = () => {
 
       const user = res.data;
       setUser(user);
+      localStorage.setItem("email",user.email);
       router.push("/dashboard");
     } catch (error: any) {
       console.error("Login failed", error);

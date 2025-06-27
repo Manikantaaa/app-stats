@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Param, Patch, Post, Query } from '@nestjs/common';
 import { AppStatsService } from './app-stats.service';
 import { CreateAppStatDto } from './dto/create-app-stat.dto';
 import { UpdateAppStatDto } from './dto/update-app-stat.dto';
@@ -14,9 +14,8 @@ export class AppStatsController {
         return await this.appStatsService.create(createAppStatDto);
         } catch (error) {
         throw new HttpException('Internal server error', 500);
-        }
-    }
-
+  }
+}
     @Get()
     async findAll() {
         try {
@@ -26,15 +25,22 @@ export class AppStatsController {
         }
     }
 
-    
-    @Get(':id')
-    async findOne(@Param('id') id: string) {
-        try {
-        return await this.appStatsService.findOne(+id);
-        } catch (error) {
-            throw new HttpException('Internal server error', 500 );
-        }
-    }
+
+  @Post("/count")
+  async getAppStats(@Body() body: any) {
+    const { apps, dateFilter, customDates, userId } = body;
+    return this.appStatsService.getStatsForApps(userId, apps, dateFilter, customDates);
+  }
+
+
+    // @Get(':id')
+    // async findOne(@Param('id') id: string) {
+    //     try {
+    //     return await this.appStatsService.findOne(+id);
+    //     } catch (error) {
+    //         throw new HttpException('Internal server error', 500 );
+    //     }
+    // }
 
   
-}
+  }

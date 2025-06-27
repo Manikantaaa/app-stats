@@ -39,7 +39,7 @@
 
 .infoBox {
   text-align: center;
-  margin-top: 290px;
+  margin-top: 190px;
 }
 
 .infoBox h1 {
@@ -257,7 +257,9 @@ table button {
 }
 
 table {
-  width: 95%;
+  margin-left: 19px;
+  margin-top: 19px;
+min-width: 70%;
   border-collapse: collapse;
   background-color: white;
   border: 1px solid #e5e7eb;
@@ -302,8 +304,10 @@ tbody tr:hover {
 .modal {
   background: #fff;
   padding: 30px 35px;
-  border-radius: 12px;
-  width: 500px;
+  /* border-radius: 12px; */
+  min-width: 450px;
+  max-height: 80%;
+  overflow-y: auto;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
@@ -369,5 +373,119 @@ tbody tr:hover {
 .modal input[type="checkbox"] {
   margin-right: 5px;
 }
+
+
+.filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 50px;
+  margin-left: 30px;
+}
+
+.dropdown-wrapper {
+  position: relative;
+  min-width: 250px;
+}
+
+.section-label {
+  font-weight: bold;
+  margin-bottom: 6px;
+  display: block;
+  color: #444;
+}
+
+.custom-dropdown {
+  border: 1px solid #ccc;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  position: relative;
+  min-width: 100%;
+}
+
+.arrow {
+  float: right;
+  font-size: 23px;
+  margin-left: 10px;
+}
+
+.dropdown-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  z-index: 10;
+  padding: 10px;
+}
+.dropdown-options span{
+  margin-left: 7px;
+}
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.95rem;
+}
+
+.date-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.date-btn {
+  padding: 9px 14px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  background-color: #eaeaea;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.date-btn.active,
+.date-btn:hover {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.custom-date-inputs {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 15px;
+  margin-left: 450px;
+}
+
+
+.custom-date-inputs input {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.submit-btn {
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #218838;
+}
+
 
 
