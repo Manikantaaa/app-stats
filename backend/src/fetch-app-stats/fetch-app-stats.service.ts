@@ -1,11 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
-// import App from '../models/app.schema';
-// import AppApi from '../models/appApi.schema';
-// import AppStats from '../models/appStats.schema';
-// import UserApp from '../models/userApp.schema'; 
-
 import { App } from 'src/apps/schemas/app.schema';
 import { AppApi } from 'src/app-api/schemas/app-api.schema';
 import { AppStats } from 'src/app-stats/schemas/app-stats.schema';

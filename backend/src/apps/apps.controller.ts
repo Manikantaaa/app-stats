@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { AppsService } from './apps.service';
+import { CreateAppDto } from './dto/create-app.dto';
 
 @Controller()
 export class AppsController {
@@ -11,7 +12,7 @@ export class AppsController {
   }
 
   @Post('add-app')
-  create(@Body() body: { app_name: string }) {
+  create(@Body() body: CreateAppDto) {
     return this.appsService.createApp(body);
   }
 

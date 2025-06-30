@@ -1,13 +1,19 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import appStatsSchema  from '../models/appStats.schema'; // Make sure this path is correct
+import { MongooseModule } from '@nestjs/mongoose'; 
 import { AppStatsService } from './app-stats.service';
 import { AppStatsController } from './app-stats.controller';
+import { AppStatsSchema } from './schemas/app-stats.schema';
+import { UserAppSchema } from 'src/userapps/schemas/userapp.schema';
+import { AppSchema } from 'src/apps/schemas/app.schema';
 
 
 @Module({
   imports: [
-     MongooseModule.forFeature([{ name: 'AppStats', schema: appStatsSchema }]),
+     MongooseModule.forFeature([
+      { name: 'AppStats', schema: AppStatsSchema },
+       { name: 'UserApp', schema: UserAppSchema },
+      { name: 'App', schema: AppSchema },
+    ]),
    ],
   providers: [AppStatsService],
   controllers: [AppStatsController]

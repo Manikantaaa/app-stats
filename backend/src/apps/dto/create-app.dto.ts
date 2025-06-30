@@ -7,6 +7,6 @@ export class CreateAppDto {
 
   @IsString()
   @IsNotEmpty()
-  app_status: string;
+  app_status: Number;
 
 }
