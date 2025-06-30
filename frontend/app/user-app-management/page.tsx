@@ -34,6 +34,18 @@ export default function UserAppManagement() {
       setUserLogged(true);
     }
   }, [user, router]);
+useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  // Clean up on unmount
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showModal]);
 
   const groupedUserApps = userApps.reduce(
     (acc: Record<number, { user: User; apps: App[] }>, curr) => {

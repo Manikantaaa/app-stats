@@ -17,16 +17,16 @@ export class AppsController {
 
   @Put('update/:id')
   update(@Param('id') id: string, @Body() body: { app_name: string }) {
-    return this.appsService.updateApp(Number(id), body);
+    return this.appsService.updateApp(id, body); // now using Mongo _id string
   }
-  @Put('toggle-status/:id')
-toggleStatus(@Param('id') id: string, @Body() body: { app_status: number }) {
-  return this.appsService.toggleAppStatus(Number(id), body.app_status);
-}
 
+  @Put('toggle-status/:id')
+  toggleStatus(@Param('id') id: string, @Body() body: { app_status: number }) {
+    return this.appsService.toggleAppStatus(id, body.app_status);
+  }
 
   @Delete('delete/:id')
   delete(@Param('id') id: string) {
-    return this.appsService.deleteApp(Number(id));
+    return this.appsService.deleteApp(id);
   }
 }

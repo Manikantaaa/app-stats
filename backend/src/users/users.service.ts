@@ -1,99 +1,47 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
+import User from '../models/user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) { }
-
   async getUsers() {
-    return this.prisma.user.findMany({
-      where: { u_status: { not: 2 } },
-      orderBy: { u_created_at: 'desc' },
-      select: {
-        u_id: true,
-        u_role: true,
-        u_firstname: true,
-        u_lastname: true,
-        u_email: true,
-        u_status: true,
-      },
-    });
+    return User.find({ u_status: { $ne: 2 } }).sort({ u_created_at: -1 });
   }
-//  async getRoleByEmail(email: string) {
-//   return this.prisma.user.findFirst({
-//     where: { u_email: email },
-//     select: {
-//       u_role: true,
-//     },
-//   });
-// }
 
-async login(data: { email: string; password: string }) {
-  const user = await this.prisma.user.findFirst({
-    where: { u_email: data.email },
-    include:{
-      userApps: {
-        select:{
-          app: {
-            select:{
-              app_id: true,
-              app_name: true
-            }
-          }
-        }
+  async login(data: { email: string; password: string }) {
+    try {
+      const user = await User.findOne({ u_email: data.email });
+      if (!user) throw new UnauthorizedException('Invalid email or password');
+
+      const isMatch = await bcrypt.compare(data.password, user.u_password);
+      if (!isMatch) throw new UnauthorizedException('Invalid email or password');
+
+      return {
+        id: user._id,
+        name: `${user.u_firstname} ${user.u_lastname}`,
+        email: user.u_email,
+        role: user.u_role,
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
       }
+      throw new UnauthorizedException('An error occurred during login');
     }
-  });
-
-  if (!user) {
-    throw new UnauthorizedException('Invalid email or password');
   }
 
-  const isMatch = await bcrypt.compare(data.password, user.u_password);
-  if (!isMatch) {
-    throw new UnauthorizedException('Invalid email or password');
+  async verify(email: string) {
+    const user = await User.findOne({ u_email: email });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    return {
+      id: user._id,
+      name: `${user.u_firstname} ${user.u_lastname}`,
+      email: user.u_email,
+      role: user.u_role,
+    };
   }
 
-
-  return {
-    name: user.u_firstname + " " + user.u_lastname,
-    email: user.u_email,
-    role: user.u_role,
-    id:user.u_id,
-    userApps: user.userApps
-    
-  };
-}
-async verify( email: string) {
-  const user = await this.prisma.user.findFirst({
-    where: { u_email: email },
-    include:{
-      userApps: {
-        select:{
-          app: {
-            select:{
-              app_id: true,
-              app_name: true
-            }
-          }
-        }
-      }
-    }
-  });
-
-  if (!user) {
-    throw new UnauthorizedException('Invalid email or password');
-  }
-  return {
-    name: user.u_firstname + " " + user.u_lastname,
-    email: user.u_email,
-    role: user.u_role,
-    id:user.u_id,
-    userApps: user.userApps
-    
-  };
-}
   async addUser(data: {
     firstname: string;
     lastname: string;
@@ -103,68 +51,38 @@ async verify( email: string) {
     role: string;
   }) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    return this.prisma.user.create({
-      data: {
-         u_role: parseInt(data.role),
-        u_firstname: data.firstname,
-        u_lastname: data.lastname,
-        u_email: data.email,
-        u_password: hashedPassword,
-        u_status: parseInt(data.status),
-       
-      },
+    const newUser = new User({
+      u_firstname: data.firstname,
+      u_lastname: data.lastname,
+      u_email: data.email,
+      u_password: hashedPassword,
+      u_role: parseInt(data.role),
+      u_status: parseInt(data.status),
     });
+    return newUser.save();
   }
 
-
-async seedRolesIfNotExists() {
-  const existingRoles = await this.prisma.userRole.findMany();
-  if (existingRoles.length === 0) {
-    await this.prisma.userRole.createMany({
-      data: [
-        { ur_id: 1, ur_role: 1 },
-        { ur_id: 2, ur_role: 2 }, 
-      ],
-      skipDuplicates: true,
-    });
-    console.log("✅ Default roles seeded.");
-  } else {
-    console.log("✅ Roles already exist, skipping seed.");
-  }
-}
-
-  // Update user (exclude password)
-  async updateUser(id: number, data: {
+  async updateUser(id: string, data: {
     firstname: string;
     lastname: string;
     email: string;
     status: string;
   }) {
-    return this.prisma.user.update({
-      where: { u_id: id },
-      data: {
-        u_id: id,
-        u_firstname: data.firstname,
-        u_lastname: data.lastname,
-        u_email: data.email,
-        u_status: parseInt(data.status),
-      },
-    });
+    return User.findByIdAndUpdate(id, {
+      u_firstname: data.firstname,
+      u_lastname: data.lastname,
+      u_email: data.email,
+      u_status: parseInt(data.status),
+    }, { new: true });
   }
 
-  // Toggle user status (active/hidden)
-  async toggleUserStatus(id: number, status: number) {
-    return this.prisma.user.update({
-      where: { u_id: id },
-      data: { u_status: status },
-    });
+    
+
+  async toggleUserStatus(id: string, status: number) {
+    return User.findByIdAndUpdate(id, { u_status: status }, { new: true });
   }
 
-  // Soft delete user
-  async deleteUser(id: number) {
-    return this.prisma.user.update({
-      where: { u_id: id },
-      data: { u_status: 2 },
-    });
+  async deleteUser(id: string) {
+    return User.findByIdAndUpdate(id, { u_status: 2 }, { new: true });
   }
 }

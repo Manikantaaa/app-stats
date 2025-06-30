@@ -222,11 +222,11 @@
   overflow-x: auto;
 }
 .list{
-  margin-left:30px;
-  margin-top: 50px;
+ margin: 40px;
 }
 .content h2 {
-  margin-bottom: 1rem;
+  /* margin-bottom: 1rem; */
+  font-weight: 600;
 }
 
 .table-header{
@@ -234,6 +234,7 @@
   justify-content: space-between;
   align-items: center;
   width: 95%;
+  margin-left: 20px;
 }
 .add{
   background: #0070f3;

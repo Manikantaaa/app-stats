@@ -22,7 +22,7 @@ export class UserAppsController {
 
   @Put(':id')
   update(@Param('id') id: string, @Body() dto: UpdateUserAppDto) {
-    return this.svc.update(+id, dto);
+    return this.svc.update(id, dto);
   }
 
   // @Delete(':id')

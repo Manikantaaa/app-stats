@@ -60,7 +60,18 @@ export default function DashboardClient() {
     fetchUsers();
   }
   }, []);
- 
+ useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showModal]);
+
    useEffect(() => {
          if (!user) {
         router.push("/");

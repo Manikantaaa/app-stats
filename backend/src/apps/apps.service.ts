@@ -1,45 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import App from '../models/app.schema'; // import the Mongoose model
 
 @Injectable()
 export class AppsService {
-  constructor(private prisma: PrismaService) { }
-
   async findAll() {
-    return this.prisma.app.findMany({
-      where: { app_status: { not: 2 } },
-      orderBy: { app_created_at: 'desc' },
-    });
+    return await App.find({ app_status: { $ne: 2 } }).sort({ app_created_at: -1 });
   }
 
   async createApp(data: { app_name: string }) {
-    return this.prisma.app.create({
-      data: {
-        app_name: data.app_name,
-        app_status: 1,
-      },
+    const newApp = new App({
+      app_name: data.app_name,
+      app_status: 1,
     });
+    return await newApp.save();
   }
 
-  async updateApp(id: number, data: { app_name: string }) {
-    return this.prisma.app.update({
-      where: { app_id: id },
-      data: {
-        app_name: data.app_name,
-      },
-    });
-  }
-  async toggleAppStatus(id: number, status: number) {
-    return this.prisma.app.update({
-      where: { app_id: id },
-      data: { app_status: status },
-    });
+  async updateApp(id: string, data: { app_name: string }) {
+    return await App.findByIdAndUpdate(id, {
+      app_name: data.app_name,
+    }, { new: true });
   }
 
-  async deleteApp(id: number) {
-    return this.prisma.app.update({
-      where: { app_id: id },
-      data: { app_status: 2 },
-    });
+  async toggleAppStatus(id: string, status: number) {
+    return await App.findByIdAndUpdate(id, { app_status: status }, { new: true });
+  }
+
+  async deleteApp(id: string) {
+    return await App.findByIdAndUpdate(id, { app_status: 2 }, { new: true });
   }
 }

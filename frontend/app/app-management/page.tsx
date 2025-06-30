@@ -26,6 +26,20 @@ const router = useRouter();
       setUserLogged(true);
     }
   }, [user, router]);
+
+  useEffect(() => {
+  if (showModal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  // Clean up on unmount
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [showModal]);
+
   useEffect(() => {
     const fetchApps = async () => {
       try {

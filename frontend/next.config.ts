@@ -1,5 +1,7 @@
+import { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
+   devIndicators: false,
   images: {
     remotePatterns: [
       {
