@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller()
 export class UserController {
@@ -19,18 +21,18 @@ export class UserController {
   verify(@Body() body: { email: string }) {
     return this.userService.verify(body.email);
   }
-
   @Post('add-user')
-  addUser(@Body() body: any) {
-    return this.userService.addUser(body);
+  addUser(@Body() dto: CreateUserDto) {
+    return this.userService.addUser(dto);
+  }
+  
+
+  @Patch('update-user/:id')
+  updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+    return this.userService.updateUser(id, dto);
   }
 
-  @Put('update-user/:id')
-  updateUser(@Param('id') id: string, @Body() body: any) {
-    return this.userService.updateUser(id, body);
-  }
-
-  @Put('toggle-user-status/:id')
+  @Patch('toggle-user-status/:id')
   toggleUserStatus(@Param('id') id: string, @Body() body: { u_status: number }) {
     return this.userService.toggleUserStatus(id, body.u_status);
   }
