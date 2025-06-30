@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateUserAppDto } from './dto/create-user-app.dto';
 import { UpdateUserAppDto } from './dto/update-user-app.dto';
+import { UserApp } from './schemas/userapp.schema';
+import { App } from 'src/apps/schemas/app.schema';
 
 @Injectable()
 export class UserAppsService {
   constructor(
-    @InjectModel('UserApp') private userAppModel: Model<any>,
-    @InjectModel('App') private appModel: Model<any>
+    @InjectModel(UserApp.name) private userAppModel: Model<UserApp>,
+    @InjectModel(App.name) private appModel: Model<App>
   ) {}
 
   async findAll() {
@@ -23,13 +25,15 @@ export class UserAppsService {
   }
 
   async create({ userId, appIds }: CreateUserAppDto) {
+   
+
     // Remove old associations
     await this.userAppModel.deleteMany({ ua_u_id: userId });
 
     // Add new associations
     const creations = appIds.map(appId => ({
       ua_u_id: userId,
-      ua_app_id: appId,
+      ua_app_id: new Types.ObjectId(appId),
       ua_status: 1,
     }));
 
@@ -39,11 +43,15 @@ export class UserAppsService {
   async update(userId: string, { appIds }: UpdateUserAppDto) {
     if (!appIds || !Array.isArray(appIds)) return;
 
-    const currentAssignments = await this.userAppModel.find({ ua_u_id: userId }).select('ua_app_id');
-    const currentAppIds = currentAssignments.map(doc => doc.ua_app_id.toString());
+      const currentAssignments = await this.userAppModel
+      .find({ ua_u_id: userId })
+      .select('ua_app_id');
+
+    const currentAppIds = currentAssignments.map(doc =>doc.ua_app_id.toString());
 
     const appsToAdd = appIds.filter(id => !currentAppIds.includes(id));
     const appsToRemove = currentAppIds.filter(id => !appIds.includes(id));
+
 
     if (appsToAdd.length > 0) {
       const creations = appsToAdd.map(appId => ({
@@ -57,15 +65,14 @@ export class UserAppsService {
     if (appsToRemove.length > 0) {
       await this.userAppModel.deleteMany({
         ua_u_id: userId,
-        ua_app_id: { $in: appsToRemove },
+        ua_app_id: { $in: appsToRemove.map(id => new Types.ObjectId(id)) },
       });
     }
 
     return { message: 'User apps updated successfully' };
   }
 
-  // Optional soft delete
-  // async remove(id: string) {
-  //   return this.userAppModel.findByIdAndDelete(id);
-  // }
+   async remove(id: string) {
+    return this.userAppModel.findByIdAndDelete(id);
+  }
 }
