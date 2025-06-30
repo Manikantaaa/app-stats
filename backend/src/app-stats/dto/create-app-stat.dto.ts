@@ -1,18 +1,25 @@
-import { IsDateString, IsInt } from 'class-validator';
+import {
+  IsDateString,
+  IsMongoId,
+  IsOptional,
+  IsNumber,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
-export class CreateAppStatDto {
+export class CreateAppStatsDto {
   @IsDateString()
-  as_date: string;
+  as_date: string; // e.g. "2024-06-30T00:00:00Z"
 
-  @IsInt()
-  as_ua_id: number;
+  @IsMongoId()
+  as_ua_id: string;
 
-  @IsInt()
-  as_ai_id: number;
+  @IsMongoId()
+  as_ai_id: string;
 
-  @IsInt()
+  @IsNumber()
   as_count: number;
 
-  @IsInt()
-  as_status: number;
+  @IsOptional()
+  @IsNumber()
+  as_status?: number; // 0=hidden, 1=active, 2=deleted
 }
