@@ -51,7 +51,7 @@ const router = useRouter();
     };
     fetchApps();
   }, []);
-  const toggleVisibility = async (id: number, currentStatus: number) => {
+  const toggleVisibility = async (id: string, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
     try {
       await axios.put(`${getApiUrl("toggleAppStatus")}/${id}`, {
@@ -62,7 +62,7 @@ const router = useRouter();
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     try {
       await axios.delete(`${getApiUrl("deleteApp")}/${id}`);
     } catch (error) {
@@ -128,7 +128,7 @@ const res=await axios.get(getApiUrl("appsList"));
         </thead>
         <tbody>
           {apps.map((app: any) => (
-            <tr key={app.app_id}>
+            <tr key={app._id}>
               <td>{app.app_name}</td>
               <td>{app.app_status === 1 ? "✅" : "🚫"}</td>
 

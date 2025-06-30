@@ -114,8 +114,10 @@ export default function DashboardClient() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {...formData}
     if (editingUserId) {
-     await axios.put(`${getApiUrl("updateUser")}/${editingUserId}`, formData);
+      delete payload.password
+     await axios.put(`${getApiUrl("updateUser")}/${editingUserId}`, payload);
     } else {
       await axios.post(getApiUrl("addUser"), formData);
     }
@@ -152,7 +154,7 @@ export default function DashboardClient() {
                 </thead>
                 <tbody>
                   {users.map((user: any) => (
-                    <tr key={user.u_id}>
+                    <tr key={user._id}>
                       <td>{user.u_firstname}</td>
                       <td>{user.u_lastname}</td>
                       <td>{user.u_status === 1 ? "✅" : "🚫"}</td>

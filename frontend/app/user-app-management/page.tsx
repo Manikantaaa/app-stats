@@ -6,8 +6,12 @@ import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthContext } from "@/context/AuthContext";
 
-type User = { u_id: number; u_firstname: string; u_lastname: string };
-type App = { app_id: number; app_name: string };
+type User = {
+  _id:string; u_id: number; u_firstname: string; u_lastname: string 
+};
+type App = {
+  _id: any; app_id: number; app_name: string 
+};
 type UserApp = {
   ua_id: number;
   ua_u_id: number;
@@ -67,15 +71,20 @@ useEffect(() => {
   useEffect(() => {
     async function fetch() {
       const [ua, u, a] = await Promise.all([
-        axios.get<UserApp[]>(getApiUrl("userApps")),
-        axios.get<User[]>(getApiUrl("usersList")),
-        axios.get<App[]>(getApiUrl("visibleApps")),
+        axios.get(getApiUrl("userApps")),
+        axios.get(getApiUrl("usersList")),
+        axios.get(getApiUrl("visibleApps")),
       ]);
+
+        const appsArray = (a.data.data as App[]);
+        const userAppsArray = Array.isArray(ua.data.data) ? ua.data.data : [];
+        const usersArray = Array.isArray(u.data) ? u.data : [];
+
       const uniqueApps = Array.from(
-        new Map(a.data.map(app => [app.app_id, app])).values()
+        new Map(appsArray.map(app => [app._id, app])).values()
       );
-      setUserApps(ua.data);
-      setUsers(u.data);
+      setUserApps(userAppsArray);
+      setUsers(usersArray);
       setApps(uniqueApps);
     }
     fetch();
@@ -186,7 +195,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                     >
                       <option value="" disabled>Select User</option>
                       {users.map(u => (
-                        <option key={u.u_id} value={u.u_id}>
+                        <option key={u._id} value={u._id}>
                           {u.u_firstname} {u.u_lastname}
                         </option>
                       ))}
