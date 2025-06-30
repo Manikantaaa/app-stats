@@ -9,7 +9,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import Appstats from "../app-stats/page";
 
 type User = {
-  u_id: number;
+  _id: string;
   u_firstname: string;
   u_lastname: string;
   u_email: string;
@@ -81,18 +81,18 @@ export default function DashboardClient() {
 },
 [router]);
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     await axios.delete(`${getApiUrl("deleteUser")}/${id}`);
-    setUsers((prev) => prev.filter((u) => u.u_id !== id));
+    setUsers((prev) => prev.filter((u) => u._id !== id));
   };
 
-  const toggleVisibility = async (id: number, currentStatus: number) => {
+  const toggleVisibility = async (id: string, currentStatus: number) => {
     const newStatus = currentStatus === 1 ? 0 : 1;
-    await axios.put(`${getApiUrl("toggleUserStatus")}/${id}`, {
+    await axios.patch(`${getApiUrl("toggleUserStatus")}/${id}`, {
       u_status: newStatus,
     });
     setUsers((prev) =>
-      prev.map((u) => (u.u_id === id ? { ...u, u_status: newStatus } : u))
+      prev.map((u) => (u._id === id ? { ...u, u_status: newStatus } : u))
     );
   };
 
@@ -104,7 +104,7 @@ export default function DashboardClient() {
       status: String(user.u_status),
       role: String(user.u_role),
     });
-    setEditingUserId(user.u_id);
+    setEditingUserId(user._id);
     setShowModal(true);
   };
 
@@ -114,10 +114,10 @@ export default function DashboardClient() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = {...formData}
+  
     if (editingUserId) {
-      delete payload.password
-     await axios.put(`${getApiUrl("updateUser")}/${editingUserId}`, payload);
+     
+     await axios.patch(`${getApiUrl("updateUser")}/${editingUserId}`, formData);
     } else {
       await axios.post(getApiUrl("addUser"), formData);
     }
@@ -159,13 +159,13 @@ export default function DashboardClient() {
                       <td>{user.u_lastname}</td>
                       <td>{user.u_status === 1 ? "✅" : "🚫"}</td>
                       <td>
-                        <button onClick={() => toggleVisibility(user.u_id, user.u_status)}
+                        <button onClick={() => toggleVisibility(user._id, user.u_status)}
                           title={user.u_status === 1 ? "Hide" : "Show"}
                         >
                           {user.u_status === 1 ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                         <button onClick={() => handleEdit(user)} title="Edit"><Pencil size={18} /></button>
-                        <button onClick={() => handleDelete(user.u_id)} title="Delete"><Trash2 size={18} /></button>
+                        <button onClick={() => handleDelete(user._id)} title="Delete"><Trash2 size={18} /></button>
                       </td>
                     </tr>
                   ))}

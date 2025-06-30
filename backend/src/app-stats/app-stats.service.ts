@@ -5,8 +5,8 @@ import { subDays, subWeeks, subMonths, startOfDay, endOfDay } from 'date-fns';
 import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { AppStats } from './schemas/app-stats.schema';
-import { UserApp } from 'src/userapps/schemas/userapp.schema';
-import { App } from 'src/apps/schemas/app.schema';
+import { UserApp } from '../userapps/schemas/userapp.schema';
+import { App } from '../apps/schemas/app.schema';
 
 @Injectable()
 export class AppStatsService {

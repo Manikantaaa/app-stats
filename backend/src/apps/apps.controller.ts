@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Patch } from '@nestjs/common';
 import { AppsService } from './apps.service';
 import { CreateAppDto } from './dto/create-app.dto';
 
@@ -16,12 +16,12 @@ export class AppsController {
     return this.appsService.createApp(body);
   }
 
-  @Put('update/:id')
+  @Patch('update/:id')
   update(@Param('id') id: string, @Body() body: { app_name: string }) {
     return this.appsService.updateApp(id, body); // now using Mongo _id string
   }
 
-  @Put('toggle-status/:id')
+  @Patch('toggle-status/:id')
   toggleStatus(@Param('id') id: string, @Body() body: { app_status: number }) {
     return this.appsService.toggleAppStatus(id, body.app_status);
   }

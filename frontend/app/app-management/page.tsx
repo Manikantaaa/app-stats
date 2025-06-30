@@ -34,7 +34,6 @@ const router = useRouter();
     document.body.style.overflow = "auto";
   }
 
-  // Clean up on unmount
   return () => {
     document.body.style.overflow = "auto";
   };
@@ -75,7 +74,7 @@ const router = useRouter();
       name: app.app_name,
       status: String(app.app_status),
     });
-    setEditingAppId(app.app_id);
+    setEditingAppId(app._id);
     setShowModal(true);
   };
 
@@ -127,14 +126,14 @@ const res=await axios.get(getApiUrl("appsList"));
           </tr>
         </thead>
         <tbody>
-          {apps.map((app: any) => (
-            <tr key={app._id}>
+          {apps.map((app: any,index) => (
+            <tr key={index}>
               <td>{app.app_name}</td>
               <td>{app.app_status === 1 ? "✅" : "🚫"}</td>
 
               <td>
                 <button
-                  onClick={() => toggleVisibility(app.app_id, app.app_status)}
+                  onClick={() => toggleVisibility(app._id, app.app_status)}
                   title={app.app_status === 1 ? "Hide" : "Show"}
                 >
                   {app.app_status === 1 ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -144,7 +143,7 @@ const res=await axios.get(getApiUrl("appsList"));
                   <Pencil size={18} />
                 </button>
 
-                <button onClick={() => handleDelete(app.app_id)} title="Delete">
+                <button onClick={() => handleDelete(app._id)} title="Delete">
                   <Trash2 size={18} />
                 </button>
 

@@ -3,8 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppStatsService } from './app-stats.service';
 import { AppStatsController } from './app-stats.controller';
 import { AppStatsSchema } from './schemas/app-stats.schema';
-import { UserAppSchema } from 'src/userapps/schemas/userapp.schema';
-import { AppSchema } from 'src/apps/schemas/app.schema';
+import { UserAppSchema } from '../userapps/schemas/userapp.schema';
+import { AppSchema } from '../apps/schemas/app.schema';
 
 
 @Module({

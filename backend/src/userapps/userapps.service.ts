@@ -4,7 +4,7 @@ import { Model, Types } from 'mongoose';
 import { CreateUserAppDto } from './dto/create-user-app.dto';
 import { UpdateUserAppDto } from './dto/update-user-app.dto';
 import { UserApp } from './schemas/userapp.schema';
-import { App } from 'src/apps/schemas/app.schema';
+import { App } from '../apps/schemas/app.schema';
 
 @Injectable()
 export class UserAppsService {

@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserAppsService } from './userapps.service';
 import { UserAppsController } from './userapps.controller';
 import { UserAppSchema } from './schemas/userapp.schema';
-import { AppSchema } from 'src/apps/schemas/app.schema';
+import { AppSchema } from '../apps/schemas/app.schema';
 
 
 @Module({
