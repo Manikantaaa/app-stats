@@ -11,6 +11,7 @@ export class CreateUserDto {
   lastname: string;
 
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @IsString()
@@ -21,6 +22,7 @@ export class CreateUserDto {
   status: string;
 
   @IsString()
+  @IsNotEmpty()
   role: string;
 }
 
