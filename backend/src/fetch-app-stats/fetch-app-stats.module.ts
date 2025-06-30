@@ -3,10 +3,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { FetchAppStatsService } from './fetch-app-stats.service';
 import { FetchAppStatsController } from './fetch-app-stats.controller';
 
-import  AppSchema  from '../models/app.schema';
-import  AppApiSchema  from '../models/appApi.schema';
-import  AppStatsSchema  from '../models/appStats.schema';
-import  UserAppSchema  from '../models/userApp.schema';
+import { AppSchema } from 'src/apps/schemas/app.schema';
+import { AppApiSchema } from 'src/app-api/schemas/app-api.schema';
+import { AppStatsSchema } from 'src/app-stats/schemas/app-stats.schema';
+import { UserAppSchema } from 'src/userapps/schemas/userapp.schema';
+
 
 @Module({
   imports: [

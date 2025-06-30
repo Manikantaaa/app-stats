@@ -1,16 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import axios from 'axios';
-import App from '../models/app.schema';
-import AppApi from '../models/appApi.schema';
-import AppStats from '../models/appStats.schema';
-import UserApp from '../models/userApp.schema'; 
+// import App from '../models/app.schema';
+// import AppApi from '../models/appApi.schema';
+// import AppStats from '../models/appStats.schema';
+// import UserApp from '../models/userApp.schema'; 
+
+import { App } from 'src/apps/schemas/app.schema';
+import { AppApi } from 'src/app-api/schemas/app-api.schema';
+import { AppStats } from 'src/app-stats/schemas/app-stats.schema';
+import { UserApp } from 'src/userapps/schemas/userapp.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+
 
 @Injectable()
 export class FetchAppStatsService {
   private jwtService: JwtService;
 
-  constructor() {
+  constructor(
+      @InjectModel(App.name) private appModel: Model<App>,
+      @InjectModel(AppApi.name) private appApiModel: Model<AppApi>,
+      @InjectModel(AppStats.name) private appStatsModel: Model<AppStats>,
+      @InjectModel(UserApp.name) private userAppModel: Model<UserApp>,
+  ) {
     this.jwtService = new JwtService({
       secret: process.env.EXTERNALAPI_SECRET_KEY,
       signOptions: { algorithm: 'HS256' },
@@ -52,7 +65,7 @@ export class FetchAppStatsService {
       for (const [featureKey, featureApps] of Object.entries(features)) {
         if (!featureApps || typeof featureApps !== 'object') continue;
 
-        const appApi = await AppApi.findOne({
+        const appApi = await this.appApiModel.findOne({
           ai_name: { $regex: new RegExp(`^${featureKey}$`, 'i') },
         });
 
@@ -64,7 +77,7 @@ export class FetchAppStatsService {
         for (const [appName, count] of Object.entries<number>(
           featureApps as Record<string, number>
         )) {
-          const app = await App.findOne({
+          const app = await this.appModel.findOne({
             app_name: { $regex: new RegExp(`^${appName}$`, 'i') },
           });
 
@@ -73,7 +86,7 @@ export class FetchAppStatsService {
             continue;
           }
 
-          const userApp = await UserApp.findOne({
+          const userApp = await this.userAppModel.findOne({
             ua_app_id: app._id,
           });
 
@@ -82,7 +95,7 @@ export class FetchAppStatsService {
             continue;
           }
 
-          await AppStats.create({
+          await this.appStatsModel.create({
             as_date: date,
             as_ai_id: appApi._id,
             as_ua_id: userApp._id,

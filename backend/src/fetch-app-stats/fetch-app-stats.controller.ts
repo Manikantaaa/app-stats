@@ -3,15 +3,19 @@ import { FetchAppStatsService } from './fetch-app-stats.service';
 
 @Controller('fetch-app-stats')
 export class FetchAppStatsController {
-    constructor(private readonly fetchappstatsservice: FetchAppStatsService) {}
+    constructor(private readonly fetchAppStatsService: FetchAppStatsService) {}
 
     @Get()
     async fetchAppStatsData() {
         try {
-            return await this.fetchappstatsservice.callExternalApi();
+           const data = await this.fetchAppStatsService.callExternalApi();
+      return {
+        success: true,
+        message: 'External API data fetched successfully',
+        data,
+      };
         } catch (error) {
-            // You can log the error here if needed
-            // console.error('Error fetching app stats:', error);
+            console.error('Error fetching app stats:', error);
             throw new Error('Failed to fetch app stats data.');
         }
     }
@@ -19,7 +23,7 @@ export class FetchAppStatsController {
     @Get('import-data')
     async fetchAndStore(){
         try {
-            await this.fetchappstatsservice.fetchAndStore();
+            await this.fetchAppStatsService.fetchAndStore();
             return { success: true };
         } catch (error) {
             console.error("Controller error:", error);
